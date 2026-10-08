@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>GENZ Feed — Email Verification</title>
+
+  <meta
+    name="description"
+    content="Confirm your GENZ Feed email address."
+  />
+
+  <style>
+    :root {
+      --background: #07100d;
+      --background-soft: #0b1713;
+      --card: #101c18;
+      --card-border: rgba(76, 220, 157, 0.14);
+
+      --green: #19c77a;
+      --green-bright: #27d889;
+      --green-soft: rgba(25, 199, 122, 0.12);
+
+      --text: #f4f7f5;
+      --text-secondary: #b7c3bd;
+      --text-muted: #7f8d86;
+
+      --error: #ff7474;
+      --error-soft: rgba(255, 116, 116, 0.10);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 24px;
+
+      background:
+        radial-gradient(
+          circle at 50% 20%,
+          rgba(25, 199, 122, 0.08),
+          transparent 34%
+        ),
+        var(--background);
+
+      color: var(--text);
+
+      font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 460px;
+    }
+
+    .brand {
+      text-align: center;
+      margin-bottom: 22px;
+    }
+
+    .brand-name {
+      margin: 0;
+
+      font-size: 24px;
+      line-height: 1.2;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+
+      color: var(--text);
+    }
+
+    .brand-name span {
+      color: var(--green);
+    }
+
+    .card {
+      width: 100%;
+
+      padding: 42px 34px 36px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.025),
+          rgba(255, 255, 255, 0)
+        ),
+        var(--card);
+
+      border: 1px solid var(--card-border);
+      border-radius: 22px;
+
+      box-shadow:
+        0 24px 70px rgba(0, 0, 0, 0.34),
+        0 0 0 1px rgba(255, 255, 255, 0.015);
+
+      text-align: center;
+    }
+
+    .status-icon {
+      width: 68px;
+      height: 68px;
+
+      margin: 0 auto 24px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 50%;
+
+      background: var(--green-soft);
+      border: 1px solid rgba(25, 199, 122, 0.20);
+
+      color: var(--green-bright);
+
+      font-size: 30px;
+      font-weight: 700;
+    }
+
+    .status-icon.loading {
+      position: relative;
+      font-size: 0;
+    }
+
+    .status-icon.loading::after {
+      content: "";
+
+      width: 24px;
+      height: 24px;
+
+      border: 2px solid rgba(25, 199, 122, 0.20);
+      border-top-color: var(--green-bright);
+
+      border-radius: 50%;
+
+      animation: spin 0.8s linear infinite;
+    }
+
+    .status-icon.error {
+      background: var(--error-soft);
+      border-color: rgba(255, 116, 116, 0.18);
+      color: var(--error);
+    }
+
+    h1 {
+      margin: 0 0 12px;
+
+      font-size: 28px;
+      line-height: 1.2;
+      font-weight: 800;
+      letter-spacing: -0.7px;
+    }
+
+    .message {
+      margin: 0 auto;
+
+      max-width: 360px;
+
+      color: var(--text-secondary);
+
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      min-height: 48px;
+
+      margin-top: 28px;
+      padding: 0 24px;
+
+      border: 0;
+      border-radius: 12px;
+
+      background: var(--green);
+      color: #06120d;
+
+      font-size: 15px;
+      font-weight: 750;
+
+      text-decoration: none;
+
+      cursor: pointer;
+
+      transition:
+        background 0.18s ease,
+        transform 0.18s ease,
+        box-shadow 0.18s ease;
+    }
+
+    .action:hover {
+      background: var(--green-bright);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(25, 199, 122, 0.18);
+    }
+
+    .action:active {
+      transform: translateY(0);
+    }
+
+    .help {
+      margin: 22px 0 0;
+
+      color: var(--text-muted);
+
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .footer {
+      margin-top: 22px;
+
+      text-align: center;
+
+      color: #58655f;
+
+      font-size: 12px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (max-width: 520px) {
+      body {
+        padding: 18px;
+      }
+
+      .card {
+        padding: 36px 24px 30px;
+        border-radius: 20px;
+      }
+
+      h1 {
+        font-size: 25px;
+      }
+
+      .brand-name {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+
+    <header class="brand">
+      <p class="brand-name">
+        GENZ <span>Feed</span>
+      </p>
+    </header>
+
+    <section class="card">
+
+      <!-- Verifying state -->
+      <div id="verifyingState">
+
+        <div class="status-icon loading" aria-hidden="true"></div>
+
+        <h1>Confirming your email</h1>
+
+        <p class="message">
+          We're securely verifying your email address.
+          This will only take a moment.
+        </p>
+
+      </div>
+
+      <!-- Success state -->
+      <div id="successState" class="hidden">
+
+        <div class="status-icon" aria-hidden="true">
+          ✓
+        </div>
+
+        <h1>Email verified</h1>
+
+        <p class="message">
+          Your GENZ Feed account is ready.
+          Return to the GENZ Feed app and sign in to continue.
+        </p>
+
+        <a
+          class="action"
+          href="mobile://"
+        >
+          Open GENZ Feed
+        </a>
+
+        <p class="help">
+          If the app doesn't open, simply open GENZ Feed
+          from your phone and sign in with your email and password.
+        </p>
+
+      </div>
+
+      <!-- Error state -->
+      <div id="errorState" class="hidden">
+
+        <div class="status-icon error" aria-hidden="true">
+          !
+        </div>
+
+        <h1>We couldn't verify your email</h1>
+
+        <p id="errorMessage" class="message">
+          This confirmation link may have expired or already been used.
+          Please return to GENZ Feed and request a new confirmation email.
+        </p>
+
+        <p class="help">
+          If you already confirmed your email, you can simply return
+          to the GENZ Feed app and sign in.
+        </p>
+
+      </div>
+
+    </section>
+
+    <footer class="footer">
+      © GENZ Feed
+    </footer>
+
+  </main>
+
+  <!-- Supabase JavaScript client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.6/dist/umd/supabase.min.js"></script>
+
+  <script>
+    /*
+     * GENZ Feed
+     * Email confirmation page
+     *
+     * This page verifies the one-time token supplied by
+     * the Supabase confirmation email.
+     *
+     * IMPORTANT:
+     * Replace the two values below with the same public
+     * Supabase values used by the GENZ Feed mobile app.
+     */
+
+    const SUPABASE_URL = "https://dkjmopqryxltjxaueoyx.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_Wc4s5W-Wu1vNWtq39y6Iwg_d3x2mPt2";
+
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY,
+      {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+          detectSessionInUrl: false
+        }
+      }
+    );
+
+    const verifyingState = document.getElementById("verifyingState");
+    const successState = document.getElementById("successState");
+    const errorState = document.getElementById("errorState");
+    const errorMessage = document.getElementById("errorMessage");
+
+    function showSuccess() {
+      verifyingState.classList.add("hidden");
+      errorState.classList.add("hidden");
+      successState.classList.remove("hidden");
+    }
+
+    function showError(message) {
+      verifyingState.classList.add("hidden");
+      successState.classList.add("hidden");
+      errorState.classList.remove("hidden");
+
+      if (message) {
+        errorMessage.textContent = message;
+      }
+    }
+
+    async function verifyEmail() {
+      const params = new URLSearchParams(window.location.search);
+
+      const tokenHash = params.get("token_hash");
+      const type = params.get("type") || "email";
+
+      if (!tokenHash) {
+        showError(
+          "This confirmation link is incomplete or invalid. Please request a new confirmation email from the GENZ Feed app."
+        );
+        return;
+      }
+
+      try {
+        const { error } = await supabaseClient.auth.verifyOtp({
+          token_hash: tokenHash,
+          type: type
+        });
+
+        if (error) {
+          console.error("Email verification failed:", error);
+
+          showError(
+            "This confirmation link may have expired or already been used. Please return to GENZ Feed and request a new confirmation email."
+          );
+
+          return;
+        }
+
+        /*
+         * The email has now been verified successfully.
+         *
+         * We deliberately do not keep the temporary browser
+         * session. The user will sign in normally inside
+         * the GENZ Feed mobile app.
+         */
+        await supabaseClient.auth.signOut({ scope: "local" });
+
+        /*
+         * Remove the sensitive token from the browser URL
+         * after successful verification.
+         */
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname
+        );
+
+        showSuccess();
+
+      } catch (error) {
+        console.error("Unexpected verification error:", error);
+
+        showError(
+          "Something went wrong while confirming your email. Please try again from the latest confirmation email."
+        );
+      }
+    }
+
+    verifyEmail();
+  </script>
+</body>
+</html>

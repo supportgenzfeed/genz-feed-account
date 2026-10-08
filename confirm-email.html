@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0"
@@ -17,7 +18,6 @@
   <style>
     :root {
       --background: #07100d;
-      --background-soft: #0b1713;
       --card: #101c18;
       --card-border: rgba(76, 220, 157, 0.14);
 
@@ -45,6 +45,7 @@
 
     body {
       min-height: 100vh;
+
       display: flex;
       align-items: center;
       justify-content: center;
@@ -188,47 +189,10 @@
       line-height: 1.65;
     }
 
-    .action {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-
-      min-height: 48px;
-
-      margin-top: 28px;
-      padding: 0 24px;
-
-      border: 0;
-      border-radius: 12px;
-
-      background: var(--green);
-      color: #06120d;
-
-      font-size: 15px;
-      font-weight: 750;
-
-      text-decoration: none;
-
-      cursor: pointer;
-
-      transition:
-        background 0.18s ease,
-        transform 0.18s ease,
-        box-shadow 0.18s ease;
-    }
-
-    .action:hover {
-      background: var(--green-bright);
-      transform: translateY(-1px);
-      box-shadow: 0 8px 24px rgba(25, 199, 122, 0.18);
-    }
-
-    .action:active {
-      transform: translateY(0);
-    }
-
     .help {
-      margin: 22px 0 0;
+      margin: 22px auto 0;
+
+      max-width: 350px;
 
       color: var(--text-muted);
 
@@ -291,7 +255,10 @@
       <!-- Verifying state -->
       <div id="verifyingState">
 
-        <div class="status-icon loading" aria-hidden="true"></div>
+        <div
+          class="status-icon loading"
+          aria-hidden="true"
+        ></div>
 
         <h1>Confirming your email</h1>
 
@@ -305,7 +272,10 @@
       <!-- Success state -->
       <div id="successState" class="hidden">
 
-        <div class="status-icon" aria-hidden="true">
+        <div
+          class="status-icon"
+          aria-hidden="true"
+        >
           ✓
         </div>
 
@@ -316,26 +286,34 @@
           Return to the GENZ Feed app and sign in to continue.
         </p>
 
+        <p class="help">
+          Open the GENZ Feed app on your phone and sign in
+          with your email and password.
+        </p>
 
       </div>
 
       <!-- Error state -->
       <div id="errorState" class="hidden">
 
-        <div class="status-icon error" aria-hidden="true">
+        <div
+          class="status-icon error"
+          aria-hidden="true"
+        >
           !
         </div>
 
         <h1>We couldn't verify your email</h1>
 
         <p id="errorMessage" class="message">
-          This confirmation link may have expired or already been used.
-          Please return to GENZ Feed and request a new confirmation email.
+          This confirmation link may have expired or already
+          been used. Please return to GENZ Feed and request
+          a new confirmation email.
         </p>
 
         <p class="help">
-          If you already confirmed your email, you can simply return
-          to the GENZ Feed app and sign in.
+          If you already confirmed your email, you can simply
+          return to the GENZ Feed app and sign in.
         </p>
 
       </div>
@@ -359,13 +337,16 @@
      * This page verifies the one-time token supplied by
      * the Supabase confirmation email.
      *
-     * IMPORTANT:
-     * Replace the two values below with the same public
-     * Supabase values used by the GENZ Feed mobile app.
+     * The Supabase Publishable key is safe for this
+     * browser-side client. Never use a Supabase secret
+     * or service_role key here.
      */
 
-    const SUPABASE_URL = "https://dkjmopqryxltjxaueoyx.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_Wc4s5W-Wu1vNWtq39y6Iwg_d3x2mPt2";
+    const SUPABASE_URL =
+      "https://dkjmopqryxltjxaueoyx.supabase.co";
+
+    const SUPABASE_ANON_KEY =
+      "sb_publishable_Wc4s5W-Wu1vNWtq39y6Iwg_d3x2mPt2";
 
     const supabaseClient = window.supabase.createClient(
       SUPABASE_URL,
@@ -379,10 +360,17 @@
       }
     );
 
-    const verifyingState = document.getElementById("verifyingState");
-    const successState = document.getElementById("successState");
-    const errorState = document.getElementById("errorState");
-    const errorMessage = document.getElementById("errorMessage");
+    const verifyingState =
+      document.getElementById("verifyingState");
+
+    const successState =
+      document.getElementById("successState");
+
+    const errorState =
+      document.getElementById("errorState");
+
+    const errorMessage =
+      document.getElementById("errorMessage");
 
     function showSuccess() {
       verifyingState.classList.add("hidden");
@@ -401,26 +389,35 @@
     }
 
     async function verifyEmail() {
-      const params = new URLSearchParams(window.location.search);
+      const params =
+        new URLSearchParams(window.location.search);
 
-      const tokenHash = params.get("token_hash");
-      const type = params.get("type") || "email";
+      const tokenHash =
+        params.get("token_hash");
+
+      const type =
+        params.get("type") || "email";
 
       if (!tokenHash) {
         showError(
           "This confirmation link is incomplete or invalid. Please request a new confirmation email from the GENZ Feed app."
         );
+
         return;
       }
 
       try {
-        const { error } = await supabaseClient.auth.verifyOtp({
-          token_hash: tokenHash,
-          type: type
-        });
+        const { error } =
+          await supabaseClient.auth.verifyOtp({
+            token_hash: tokenHash,
+            type: type
+          });
 
         if (error) {
-          console.error("Email verification failed:", error);
+          console.error(
+            "Email verification failed:",
+            error
+          );
 
           showError(
             "This confirmation link may have expired or already been used. Please return to GENZ Feed and request a new confirmation email."
@@ -432,11 +429,13 @@
         /*
          * The email has now been verified successfully.
          *
-         * We deliberately do not keep the temporary browser
-         * session. The user will sign in normally inside
-         * the GENZ Feed mobile app.
+         * We deliberately do not keep the temporary
+         * browser session. The user will sign in normally
+         * inside the GENZ Feed mobile app.
          */
-        await supabaseClient.auth.signOut({ scope: "local" });
+        await supabaseClient.auth.signOut({
+          scope: "local"
+        });
 
         /*
          * Remove the sensitive token from the browser URL
@@ -451,7 +450,10 @@
         showSuccess();
 
       } catch (error) {
-        console.error("Unexpected verification error:", error);
+        console.error(
+          "Unexpected verification error:",
+          error
+        );
 
         showError(
           "Something went wrong while confirming your email. Please try again from the latest confirmation email."
